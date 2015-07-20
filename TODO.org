@@ -1,0 +1,3 @@
+* TODO asm strings [:db "string"]
+* TODO maintain defproc order
+* TODO a page system wihtout defpage from sjasm
