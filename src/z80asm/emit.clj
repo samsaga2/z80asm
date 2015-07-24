@@ -24,7 +24,6 @@
 
 (defn- emit-arg
   [arg]
-  (println arg)
   (cond
     (keyword? arg)
     (name arg)
