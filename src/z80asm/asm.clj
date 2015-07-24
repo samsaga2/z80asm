@@ -21,6 +21,10 @@
       (str/replace #"[^A-Z0-9a-z]" "_")
       (keyword)))
 
+(defmacro decproc
+  [name]
+  `(def ~name ~(symbol->label name)))
+
 (defmacro defproc
   [name & insts]
   (let [label (symbol->label name)]

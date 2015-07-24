@@ -1,15 +1,11 @@
 (ns hello-world
   (require [z80asm.asm :refer :all]
-           [z80asm.compile :refer [compile run]]))
+           [z80asm.compile :refer [compile run]]
+           [z80asm.msx.bios :as bios]
+           [z80asm.msx.sysvar :as sysvar]
+           [z80asm.msx.openmsx :as openmsx]))
 
-(def chgmod 0x005f)
-(def chgclr 0x0062)
-(def chput 0x00a2)
-(def forclr 0xf3e9)
-(def bakclr 0xf3ea)
-(def bdrclr 0xf3eb)
-
-(declare main)
+(decproc main)
 
 (defproc romheader
   [:defpage 0 0x4000 0x2000]
@@ -21,23 +17,22 @@
 
 (defproc init
   [:ld :a 0]
-  [:call chgmod]
+  [:call bios/chgmod]
   [:ld :a 15]
-  [:ld [forclr] :a]
+  [:ld [sysvar/forclr] :a]
   [:xor :a]
-  [:ld [bakclr] :a]
-  [:ld [bdrclr] :a]
-  [:call chgclr]
+  [:ld [sysvar/bakclr] :a]
+  [:ld [sysvar/bdrclr] :a]
+  [:call bios/chgclr]
   [:ret])
 
-(defproc print-msg
-  [:ld :hl msg]
+(defproc print-string
   [:ld :b [:hl]]
   [:inc :hl]
   (with-djnz
     [:ld :a [:hl]]
     [:inc :hl]
-    [:call chput])
+    [:call bios/chput])
   [:ret])
 
 (defproc msg
@@ -45,7 +40,8 @@
 
 (defproc main
   [:call init]
-  [:call print-msg]
+  [:ld :hl msg]
+  [:call print-string]
   (with-label l [:jr l]))
 
 (compile "hello-world.asm")
