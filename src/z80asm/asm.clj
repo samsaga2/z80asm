@@ -36,13 +36,13 @@
   (str/join "\n"
             (reverse (map second @procedures))))
 
-(defmacro with-label
+(defmacro label
   [name & body]
   `(let [~name (keyword (gensym))]
      (emit-lines (vector [:label ~name] ~@body))))
 
-(defmacro with-djnz
+(defmacro djnz
   [& body]
-  `(with-label l#
+  `(label l#
      ~@body
      [:djnz l#]))

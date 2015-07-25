@@ -1,9 +1,11 @@
 (ns hello-world
   (require [z80asm.asm :refer :all]
-           [z80asm.compile :refer [compile run]]
+           [z80asm.compile :refer [compile-and-run]]
            [z80asm.msx.bios :as bios]
            [z80asm.msx.sysvar :as sysvar]
            [z80asm.msx.openmsx :as openmsx]))
+
+(clear-procedures!)
 
 (decproc main)
 
@@ -29,10 +31,10 @@
 (defproc print-string
   [:ld :b [:hl]]
   [:inc :hl]
-  (with-djnz
-    [:ld :a [:hl]]
-    [:inc :hl]
-    [:call bios/chput])
+  (djnz
+   [:ld :a [:hl]]
+   [:inc :hl]
+   [:call bios/chput])
   [:ret])
 
 (defproc msg
@@ -42,7 +44,6 @@
   [:call init]
   [:ld :hl msg]
   [:call print-string]
-  (with-label l [:jr l]))
+  (label l [:jr l]))
 
-(compile "hello-world.asm")
-(run "hello-world.out")
+(compile-and-run "hello-world")
